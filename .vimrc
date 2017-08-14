@@ -74,6 +74,15 @@ let Tlist_Use_Right_Window = 1 "put list window on the rigth
 map <silent> <Leader>tc :TlistClose<CR>
 map <silent> <Leader>to :TlistOpen<CR>
 
+" Setup the status line to display the tagname, if the taglist plugin has been
+" loaded
+autocmd VimEnter * try
+autocmd VimEnter *   call Tlist_Get_Tagname_By_Line()
+autocmd VimEnter *   set statusline=%f\ %y%{GetStatusEx()}[b:%n]\ [t:%{Tlist_Get_Tagname_By_Line()}]\ %m%r%=(%l/%L,%c%V)\ %P
+autocmd VimEnter *   map <silent> <Leader>tap :TlistAddFilesRecursive . *pm<CR>
+autocmd VimEnter * catch
+autocmd VimEnter * endt
+
 " nvim stuffs:
 " turn off mouse in nivm
 if has('nvim')
