@@ -1,0 +1,3 @@
+export JAVA_HOME=/home/cmyers/jvms/jdk1.8.0_60
+export PATH=$JAVA_HOME/bin:$PATH
+export JAVA_1_8_HOME=$JAVA_HOME
