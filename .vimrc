@@ -7,11 +7,15 @@
 " Replacing with vim-plug
 call plug#begin('~/projects/vim')
 
+" I trust tpope, I guess
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-markdown'
+
+" but these other ones, I'm gonna fork and read before running
+Plug 'terabyte/vim-flake8'
 Plug 'terabyte/taglist.vim'
 
 " First time, run :PlugInstall to install these
@@ -38,6 +42,11 @@ set hidden
 set hls
 set background=dark
 
+" from https://www.youtube.com/watch?v=aHm36-na4-4
+highlight ColorColumn ctermbg=magenta
+call matchadd('ColorColumn', '\%100v', 100)
+call matchadd('ColorColumn', '\%120v', 100)
+
 syntax on
 filetype plugin indent on
 
@@ -62,6 +71,10 @@ autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
 " match trailing whitespace except when typing at the end of a line
 match ExtraWhitespace /\s\+\%#\@<!$/
 
+" flake8 settings (python pep8 checking)
+" apt-get install flake8 if you don't have it
+autocmd BufWritePost *.py call Flake8()
+
 " taglist settings
 let Tlist_Auto_Open=1 "Auto open the list window
 let Tlist_Compact_Format=1
@@ -76,12 +89,12 @@ map <silent> <Leader>to :TlistOpen<CR>
 
 " Setup the status line to display the tagname, if the taglist plugin has been
 " loaded
-autocmd VimEnter * try
-autocmd VimEnter *   call Tlist_Get_Tagname_By_Line()
-autocmd VimEnter *   set statusline=%f\ %y%{GetStatusEx()}[b:%n]\ [t:%{Tlist_Get_Tagname_By_Line()}]\ %m%r%=(%l/%L,%c%V)\ %P
-autocmd VimEnter *   map <silent> <Leader>tap :TlistAddFilesRecursive . *pm<CR>
-autocmd VimEnter * catch
-autocmd VimEnter * endt
+"autocmd VimEnter * try
+"autocmd VimEnter *   call Tlist_Get_Tagname_By_Line()
+"autocmd VimEnter *   set statusline=%f\ %y%{GetStatusEx()}[b:%n]\ [t:%{Tlist_Get_Tagname_By_Line()}]\ %m%r%=(%l/%L,%c%V)\ %P
+"autocmd VimEnter *   map <silent> <Leader>tap :TlistAddFilesRecursive . *pm<CR>
+"autocmd VimEnter * catch
+"autocmd VimEnter * endt
 
 " nvim stuffs:
 " turn off mouse in nivm
