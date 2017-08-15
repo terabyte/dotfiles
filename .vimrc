@@ -122,10 +122,6 @@ cmap w!! w !sudo tee % >/dev/null
 "autocmd VimEnter * endt
 
 " nvim stuffs:
-" turn off mouse in nivm
-if has('nvim')
-    "set-option -g mouse-utf8 off
-endif
 
 if has('nvim')
     " https://github.com/neovim/neovim/wiki/FAQ#copying-to-x11-primary-selection-with-the-mouse-doesnt-work
