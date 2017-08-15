@@ -81,15 +81,16 @@ setopt NO_HUP # Don't murder things in the face
 export KEYTIMEOUT=1
 
 export EXTENDED_HISTORY=1       # store time in history
+export HIST_SAVE_NO_DUPS=1      # no duplicates
 export HIST_EXPIRE_DUPS_FIRST=1 # unique events are more usefull to me
+export HIST_IGNORE_DUPS=1       # don't insert immediately duplicated lines twice
 export HIST_VERIFY=1	        # Make those history commands nice
 export INC_APPEND_HISTORY=1     # immediatly insert history into history file
-export SHARE_HISTORY=1          # share history between all shells...don't know if this   is a good idea or not
-export HIST_IGNORE_DUPS=1       # don't insert immediately duplicated lines twice
+export SHARE_HISTORY=1          # share history between all shells...don't know if this is a good idea or not
 setopt TRANSIENT_RPROMPT      # RPROMPT disappears in terminal history
 export HISTFILE=$HOME/.histfile
-export HISTSIZE=1000000
-export SAVEHIST=1000000
+export HISTSIZE=100000000
+export SAVEHIST=100000000
 
 # Prompt Options
 export MAILCHECK=0
@@ -240,3 +241,13 @@ export PYTHON_2_7_BIN="/usr/bin/python"
 export PATH="$PATH:$HOME/.rvm/bin"
 
 export PYTHONSTARTUP=~/.pythonrc
+
+# FZF is amazeballs
+if [[ -f ~/.fzf.zsh ]]; then
+    source ~/.fzf.zsh
+    export FZF_TMUX=1
+    export FZF_TMUX_HEIGHT="20%"
+    export FZF_DEFAULT_OPTS='--height 20% --min-height=10 --reverse --border'
+
+fi
+

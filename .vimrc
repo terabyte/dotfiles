@@ -1,6 +1,5 @@
 " TODO: http://nvie.com/posts/how-i-boosted-my-vim/
 
-
 " Removing pathogen
 "execute pathogen#infect()
 
@@ -13,6 +12,10 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-markdown'
+Plug 'tpope/vim-repeat'
+
+" fzf integration - currently some things are broken inside tmux because...reasons: https://github.com/junegunn/fzf.vim/issues/400
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 
 " but these other ones, I'm gonna fork and read before running
 Plug 'terabyte/vim-flake8'
@@ -36,34 +39,52 @@ Plug 'terabyte/taglist.vim'
 call plug#end()
 
 
-set sw=4 ts=4 expandtab background=dark nu
+set nocompatible
 set hidden
-
+set sw=4 ts=4 expandtab background=dark
 set hls
-set background=dark
+set nowrap
+set backspace=indent,eol,start
+set autoindent
+set copyindent
+set showmatch
+set incsearch
+set history=10000
+set undolevels=10000
+set title
+set visualbell
+set noerrorbells
+
+
+" TODO: testing this.  This means no annoying recovery from crashes, but also
+" any unsaved work is ALWAYS lost.  Also, if I load large files, it all has to
+" go into memory...maybe bad for large log files?
+set nobackup
+set noswapfile
+
+" Because of the above lines, no longer need this:
+" avoid shitting swapfiles all over
+"set directory=$HOME/.vim/bak//
+
+syntax on
+filetype plugin indent on
+
+" cool numbers bro!
+set nu relativenumber
 
 " from https://www.youtube.com/watch?v=aHm36-na4-4
 highlight ColorColumn ctermbg=magenta
 call matchadd('ColorColumn', '\%100v', 100)
 call matchadd('ColorColumn', '\%120v', 100)
 
-syntax on
-filetype plugin indent on
-
 " make .page associated with markdown filetype
 au BufRead,BufNewFile *.page set filetype=markdown
 
 set makeprg=~/bin/ghetto-make
 
-" avoid shitting swapfiles all over
-set directory=$HOME/.vim/bak//
-
 set ttimeout
 set ttimeoutlen=30
 
-" cool numbers bro!
-set number
-set relativenumber
 
 " show whitespace (http://vim.wikia.com/wiki/VimTip396)
 highlight ExtraWhitespace ctermbg=red guibg=red
@@ -87,6 +108,10 @@ let Tlist_Use_Right_Window = 1 "put list window on the rigth
 map <silent> <Leader>tc :TlistClose<CR>
 map <silent> <Leader>to :TlistOpen<CR>
 
+" Write it no matter what!!!
+" http://nvie.com/posts/how-i-boosted-my-vim/
+cmap w!! w !sudo tee % >/dev/null
+
 " Setup the status line to display the tagname, if the taglist plugin has been
 " loaded
 "autocmd VimEnter * try
@@ -107,4 +132,15 @@ if has('nvim')
     vnoremap <LeftRelease> "*ygv
 endif
 
+if has('nvim')
+    " https://github.com/junegunn/fzf.vim
+    function! s:fzf_statusline()
+        " Override statusline as you like
+        highlight fzf1 ctermfg=161 ctermbg=251
+        highlight fzf2 ctermfg=23 ctermbg=251
+        highlight fzf3 ctermfg=237 ctermbg=251
+        setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
+    endfunction
 
+    autocmd! User FzfStatusLine call <SID>fzf_statusline()
+endif
