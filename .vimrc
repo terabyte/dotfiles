@@ -16,10 +16,12 @@ Plug 'tpope/vim-repeat'
 
 " fzf integration - currently some things are broken inside tmux because...reasons: https://github.com/junegunn/fzf.vim/issues/400
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 
 " but these other ones, I'm gonna fork and read before running
 Plug 'terabyte/vim-flake8'
 Plug 'terabyte/taglist.vim'
+Plug 'terabyte/vim-highlightedyank'
 
 " First time, run :PlugInstall to install these
 " Future times after edit, run :PlugUpdate
@@ -35,6 +37,13 @@ Plug 'terabyte/taglist.vim'
 " Plug 'blah/foo', { 'tag': '2.*' }
 " Plug 'blah/foo', { 'branch': 'stable' }
 " more here: https://github.com/terabyte/vim-plug
+"
+
+" TODO: plugins I should try:
+" https://github.com/terryma/vim-multiple-cursors
+" https://github.com/easymotion/vim-easymotion
+" ALE (syntastic replacement)
+" auto-pairs, gundo, camelcasemotion, comment
 "
 call plug#end()
 
@@ -71,6 +80,7 @@ filetype plugin indent on
 
 " cool numbers bro!
 set nu relativenumber
+autocmd FileType taglist set nonu norelativenumber
 
 " from https://www.youtube.com/watch?v=aHm36-na4-4
 highlight ColorColumn ctermbg=magenta
@@ -80,7 +90,7 @@ call matchadd('ColorColumn', '\%120v', 100)
 " make .page associated with markdown filetype
 au BufRead,BufNewFile *.page set filetype=markdown
 
-set makeprg=~/bin/ghetto-make
+"set makeprg=~/bin/ghetto-make
 
 set ttimeout
 set ttimeoutlen=30
@@ -95,6 +105,14 @@ match ExtraWhitespace /\s\+\%#\@<!$/
 " flake8 settings (python pep8 checking)
 " apt-get install flake8 if you don't have it
 autocmd BufWritePost *.py call Flake8()
+
+" shellcheck integration - https://jezenthomas.com/shell-script-static-analysis-in-vim/
+au BufRead,BufNewFile *.sh set makeprg=shellcheck\ -x\ -f\ gcc\ %
+autocmd BufWritePost *.sh :silent make | redraw!
+au QuickFixCmdPost [^l]* nested cwindow
+"au QuickFixCmdPost belowright cwindow 10
+"au QuickFixCmdPost l* nested lwindow
+
 
 " taglist settings
 let Tlist_Auto_Open=1 "Auto open the list window
@@ -128,6 +146,16 @@ if has('nvim')
     vnoremap <LeftRelease> "*ygv
 endif
 
+" fzf stuff
+imap <c-x><c-l> <plug>(fzf-complete-line)
+imap <c-x><c-f> <plug>(fzf-complete-file)
+nnoremap <leader>p :History<CR>
+nnoremap <leader>b :Buffers<CR>
+nnoremap <leader>f :Files<CR>
+nnoremap <leader>c :Commits<CR>
+
+" TODO: Commits ?
+"
 if has('nvim')
     " https://github.com/junegunn/fzf.vim
     function! s:fzf_statusline()
@@ -139,4 +167,16 @@ if has('nvim')
     endfunction
 
     autocmd! User FzfStatusLine call <SID>fzf_statusline()
+endif
+
+" COOL NEOVIM FEATURES!
+if has("nvim")
+    " show substitution commands live!  split => show preview in split window,
+    " nosplit disables that
+    set inccommand=split
+endif
+
+" highlighted yank plugin needs config if NOT neovim
+if ! has("nvim")
+    map y <Plug>(highlightedyank)
 endif

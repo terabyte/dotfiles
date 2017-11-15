@@ -247,7 +247,18 @@ if [[ -f ~/.fzf.zsh ]]; then
     source ~/.fzf.zsh
     export FZF_TMUX=1
     export FZF_TMUX_HEIGHT="20%"
-    export FZF_DEFAULT_OPTS='--height 20% --min-height=10 --reverse --border'
+    export FZF_DEFAULT_OPTS='--height 20% --min-height=10 --reverse --border --inline-info'
 
 fi
 
+
+# go to a path relative to the top directory
+# of the current git worktree.
+# from: https://dmerej.info/blog/post/fzf-for-the-win/
+function gcd() {
+    topdir=$(git rev-parse --show-toplevel)
+    if [[ $? -ne 0 ]]; then
+        return 1
+    fi
+    cd "${topdir}/${1}"
+}
