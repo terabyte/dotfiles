@@ -1,0 +1,89 @@
+# base configs
+[core]
+	excludesfile = /home/cmyers/.gitignore
+    #whitespace = fix,trailing-space,space-before-tab,indent-with-non-tab,cr-at-eol
+	# This enabled colors in less along with the pager = true line in [color] below
+	pager = less -FRSX
+
+[gc]
+	auto = 0
+
+[pack]
+	threads = 4
+
+[rerere]
+	enabled = true
+
+[branch]
+	autosetuprebase = always
+
+[diff]
+	renames = copy # nmakes diff shorter when moving/copying files
+
+[user]
+	name = Carl Myers
+	email = cmyers@cmyers.org
+#	email = cmyers@cloudera.com
+
+# If using SSL Cert HTTPS stuff, it looks like this:
+#[http]
+#	sslCert=/home/cmyers/authcerts/newcert.pem
+#	sslKey=/home/cmyers/authcerts/newkey.pem
+#	sslCertPasswordProtected=true
+
+# UI changes, color / etc
+[alias]
+	llog = log --date=local
+	st = status --short
+	co = checkout
+	cp = cherry-pick
+	ci = commit
+	cl = clone
+	br = branch
+	staged = diff --cached --color
+	#diff = diff --word-diff
+	who = shortlog -s
+	diff = diff --color-words
+	last = log --date=local -1
+	unstage = reset HEAD --
+	standup = shortlog --since=yesterday
+	hlog = log --date-order --graph --format=\"%C(green)%H%Creset %C(yellow)%an%Creset %C(blue bold)%ad%Creset %C(red bold)%d%Creset%s\"
+	alog = log --date-order --all --graph --format=\"%C(green)%H%Creset %C(yellow)%an%Creset %C(blue bold)%ad%Creset %C(red bold)%d%Creset%s\"
+	foobar = log --date-order --graph --format=\"%C(green)%H%Creset %C(yellow)%an%Creset %C(blue bold)%ad%Creset %C(red bold)%d%Creset%s\"
+#    alog = log --date-order --all --graph --format=\"%C(green)%H%Creset %C(yellow)%an%Creset %C(blue bold)%ad%Creset %C(red bold)%d%Creset%s\" --not notes/review
+	#hlog = log --pretty=oneline --date-order --graph --all --decorate
+	#hlog = log --date-order --all --graph --format=\"%C(green)%H%Creset %C(yellow)%an%Creset %C(blue bold)%ar%Creset %C(red bold)%d%Creset%s\"
+
+[color]
+	branch = auto
+	diff = auto
+	status = auto
+	log = auto
+	interactive = auto
+	pager = true
+
+[color "status"]
+	added = yellow
+	changed = green
+	untracked = red bold
+
+# you can make aliases for remotes like this:
+# Thanks to: http://stackoverflow.com/questions/267761/what-does-your-gitconfig-contain
+# [url "git@github.com:bartman/"]
+#     insteadOf = github:
+[push]
+	default = tracking
+
+[pack]
+    packSizeLimit = 1g
+[merge]
+    conflictStyle = diff3
+
+[url "git://git.debian.org/d-i/"]
+	insteadOf = git+ssh://git.debian.org/git/d-i/
+
+[diff "qbt-manifest"]
+    command = qbt sdiffDriver
+
+[merge "qbt-manifest"]
+      driver = qbt mergeDriver %A %O %B
