@@ -52,7 +52,9 @@ set nocompatible
 set hidden
 set sw=4 ts=4 expandtab background=dark
 set hls
-set nowrap
+"set nowrap
+" temporary- for giving this presentation
+set wrap
 set backspace=indent,eol,start
 set autoindent
 set copyindent

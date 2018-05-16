@@ -210,8 +210,8 @@ PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 # load rvm
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
 
-if [[ -e ~/.java8rc ]]; then
-	source ~/.java8rc
+if [[ -e ~/.java10rc ]]; then
+	source ~/.java10rc
 fi
 
 bindkey -v # VI keybindings!
@@ -262,3 +262,7 @@ function gcd() {
     fi
     cd "${topdir}/${1}"
 }
+
+if [[ -f ~/.jenkins-api-token ]]; then
+    source ~/.jenkins-api-token
+fi

@@ -1,0 +1,80 @@
+# .ratpoisonrc
+# Inspired primarily by
+# http://en.wikibooks.org/wiki/Using_Ratpoison/Example_Config
+
+# change to home dir
+chdir
+
+# restore frames
+exec ratpoison -c "sfrestore $(cat ~/.rpframes)"
+# perform a backup
+alias backup exec ratpoison -c "sfdump" > ~/.rpframes
+
+# flip between configs
+alias single exec ~/bin/configure-for-remote.sh
+#alias triple exec ~/bin/configure-for-home.sh
+alias work exec ~/bin/configure-for-work.sh
+alias home exec ~/bin/configure-for-home.sh
+
+# set up frames keybindings - after doing a save, then a restore, you might have
+# to experimentally determine these.
+bind C-1 fselect 0
+bind C-2 fselect 3
+bind C-3 fselect 1
+bind C-4 fselect 2
+
+# set up workspaces
+# this lets you flip between completely different desktops.  windows are not
+# shared between them.
+# http://manpages.ubuntu.com/manpages/hardy/man1/rpws.1.html
+/usr/bin/rpws init 3 -k
+bind C-0 exec /usr/bin/rpws 1
+bind C-9 exec /usr/bin/rpws 2
+bind C-8 exec /usr/bin/rpws 3
+
+# set term to xterm.  I hope?
+alias term exec xterm -u8
+
+# Change the background and pointer in X
+exec xsetroot -solid black -cursor_name left_ptr
+
+# remember cursor position in each individual window
+warp on
+
+# set term to xterm.  I hope?
+alias term exec xterm -u8
+# Change the background and pointer in X
+exec xsetroot -solid black -cursor_name left_ptr
+#exec xsetroot -cursor_name left_ptr
+
+# confirm ctrl key
+exec setxkbmap -layout us -option ctrl:nocaps
+
+exec xscreensaver-command -exit
+exec xscreensaver &
+
+# control my music volume
+bind s-Up exec amixer -D pulse set Master 5%+
+bind s-Down exec amixer -D pulse set Master 5%-
+#http://askubuntu.com/questions/65764/how-do-i-toggle-sound-with-amixer
+bind s-p exec amixer -D pulse set Master 1+ toggle
+
+# lock screen
+bind l exec xscreensaver-command -lock
+bind C-r focuslast
+
+# make msgs appear in the center of the screen
+set bargravity c
+
+## OLD
+#bind s-Up exec amixer sset Master 5%+
+#bind s-Down exec amixer sset Master 5%-
+#bind s-p exec amixer sset Master toggle
+
+## OLD
+# Screen selecting stuff
+#bind C-1 sselect 0
+#bind C-2 sselect 1
+#
+#bind C-r focuslast
+
