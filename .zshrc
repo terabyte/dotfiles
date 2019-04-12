@@ -1,5 +1,6 @@
 # Path to your oh-my-zsh installation.
-  export ZSH=/home/cmyers/.oh-my-zsh
+export ZSH=/home/cmyers/.oh-my-zsh
+export LANG=en_US.UTF-8
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
@@ -62,7 +63,7 @@ POWERLEVEL9K_BATTERY_LOW_THRESHOLD=25
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git docker encode64 gem gradle httpie mercurial mvn node perl pip pylint repo screen sudo supervisor svn-fast-info vi-mode)
+plugins=(git docker encode64 gem gradle httpie mercurial mvn node perl pip pylint repo screen sudo supervisor svn-fast-info vi-mode kubectl)
 
 # User configuration
 
@@ -74,37 +75,43 @@ export PATH="$PATH:/home/cmyers/projects/private_notes/bin"
 source $ZSH/oh-my-zsh.sh
 
 # settings "rescued" from my old zsh
-setopt NO_HUP # Don't murder things in the face
+# do not murder things in the face
+setopt NO_HUP
 # VI editing mode is a pain to use if you have to wait for <ESC> to register.
 # This times out multi-char key combos as fast as possible. (1/100th of a
 # second.)
 export KEYTIMEOUT=1
 
 export EXTENDED_HISTORY=1       # store time in history
-export HIST_SAVE_NO_DUPS=1      # no duplicates
+#export HIST_SAVE_NO_DUPS=1      # no duplicates
+#export HIST_IGNORE_DUPS=1       # do not insert immediately duplicated lines twice
 export HIST_EXPIRE_DUPS_FIRST=1 # unique events are more usefull to me
-export HIST_IGNORE_DUPS=1       # don't insert immediately duplicated lines twice
 export HIST_VERIFY=1	        # Make those history commands nice
 export INC_APPEND_HISTORY=1     # immediatly insert history into history file
-export SHARE_HISTORY=1          # share history between all shells...don't know if this is a good idea or not
+export SHARE_HISTORY=1          # share history between all shells
 setopt TRANSIENT_RPROMPT      # RPROMPT disappears in terminal history
+setopt HIST_IGNORE_SPACE      # ignore commands starting with a space - my way of private commands
 export HISTFILE=$HOME/.histfile
-export HISTSIZE=100000000
-export SAVEHIST=100000000
+# from limits.h, for 64-bit, long_max is 9,223,372,036,854,775,807 or 9223372036854775807
+# 32-bit is 2,147,483,647 or 2147483647
+export HISTSIZE=2147483646
+export SAVEHIST=$HISTSIZE
 
 # Prompt Options
 export MAILCHECK=0
-export REPORTTIME=5            # this is cool - any command that takes over 5 seconds will report stats
+export REPORTTIME=1            # this is cool - any command that takes over 5 seconds will report stats
 
 export OVERRIDE_EDITOR="vim"
 export EDITOR="vim"   # programs will use this by default if you need to edit something
-export PAGER=less   # less is more :)
+#
+# I will request a pager when I want it
+export GIT_PAGER=""
+export PAGER="less"
 
 export GIT_PAGER= # no pager for git
 export LESS='-Ri'                # case insensitive searching in less and support colors
 export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:*.tex=01;33:*.sxw=01;33:*.sxc=01;33:*.lyx=01;33:*.pdf=0;35:*.ps=00;36:*.asm=1;33:*.S=0;33:*.s=0;33:*.h=0;31:*.c=0;35:*.cxx=0;35:*.cc=0;35:*.C=0;35:*.o=1;30:*.am=1;33:*.py=0;34:'
 export GREP_COLOR='1;35'
-export LANG=en_US.UTF-8
 
 ####
 ## SSH AGENT STUFF
@@ -209,6 +216,9 @@ function realzpath() {
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 # load rvm
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
+
+# rust stuff
+[[ -s "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
 if [[ -e ~/.java10rc ]]; then
 	source ~/.java10rc
