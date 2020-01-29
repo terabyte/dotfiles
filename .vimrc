@@ -14,6 +14,9 @@ Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-markdown'
 Plug 'tpope/vim-repeat'
 
+" TabNine
+Plug 'terabyte/tabnine-vim'
+
 " fzf integration - currently some things are broken inside tmux because...reasons: https://github.com/junegunn/fzf.vim/issues/400
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
@@ -22,6 +25,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'terabyte/vim-flake8'
 Plug 'terabyte/taglist.vim'
 Plug 'terabyte/vim-highlightedyank'
+
 
 " First time, run :PlugInstall to install these
 " Future times after edit, run :PlugUpdate
@@ -117,7 +121,7 @@ au QuickFixCmdPost [^l]* nested cwindow
 
 
 " taglist settings
-let Tlist_Auto_Open=1 "Auto open the list window
+let Tlist_Auto_Open=0 "Auto open the list window
 let Tlist_Compact_Format=1
 let Tlist_Enable_Fold_Column=0 "Turn off the fold column for list window
 let Tlist_Exit_OnlyWindow=1 "Exit if list is only window
