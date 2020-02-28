@@ -1,3 +1,26 @@
+# ensure profile is loaded
+if [ -z "$CMYERS_PROFILE_LOADED" ]; then
+    source "$HOME/.zprofile"
+fi
+
+# BEGIN env Setup -- Managed by Ansible DO NOT EDIT.
+
+# Single-brace syntax because this is required in bash and sh alike
+if [ -e "$HOME/env/etc/indeedrc" ]; then
+    . "$HOME/env/etc/indeedrc"
+fi
+
+# END env Setup -- Managed by Ansible DO NOT EDIT.
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+####
+##  Start CMYERS ZSH
+####
+
+
 # Path to your oh-my-zsh installation.
 export ZSH=/home/cmyers/.oh-my-zsh
 export LANG=en_US.UTF-8
@@ -63,12 +86,12 @@ POWERLEVEL9K_BATTERY_LOW_THRESHOLD=25
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git docker encode64 gem gradle httpie mercurial mvn node perl pip pylint repo screen sudo supervisor svn-fast-info vi-mode kubectl)
+plugins=(git docker encode64 gem gradle httpie mercurial mvn node perl pip pylint repo screen sudo supervisor svn-fast-info vi-mode kubectl poetry)
 
 # User configuration
 
   #export PATH="/home/cmyers/jvms/jdk1.8.0_60/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/cmyers/bin:/home/cmyers/usr/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/X11R6/bin:/usr/X11/bin:.:/home/cmyers/.rvm/bin:/home/cmyers/bin:/home/cmyers/usr/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/X11R6/bin:/usr/X11/bin:.:/home/cmyers/.rvm/bin"
-export PATH="$HOME/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/X11R6/bin:/usr/X11/bin"
+export PATH="$HOME/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/X11R6/bin:/usr/X11/bin:$PATH"
 # export MANPATH="/usr/local/man:$MANPATH"
 export PATH="$PATH:/home/cmyers/projects/private_notes/bin"
 
@@ -220,8 +243,8 @@ PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 # rust stuff
 [[ -s "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
-if [[ -e ~/.java10rc ]]; then
-	source ~/.java10rc
+if [[ -e ~/.java-indeed-rc ]]; then
+	source ~/.java-indeed-rc
 fi
 
 bindkey -v # VI keybindings!
@@ -276,3 +299,35 @@ function gcd() {
 if [[ -f ~/.jenkins-api-token ]]; then
     source ~/.jenkins-api-token
 fi
+
+# new pyenv stuff
+export PATH="/home/cmyers/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+# previous pyenv stuff
+#export PYENV_ROOT="$HOME/.pyenv"
+#export PATH="$PYENV_ROOT/bin:$PATH"
+#
+#eval "$(pyenv init -)"
+
+# shield stuff
+export PYTHONPATH=/home/cmyers/indeed/shield/products:$PYTHONPATH
+export PYTHONPATH=/home/cmyers/indeed/shield/products/pyprotos/clients:$PYTHONPATH
+
+# needed by thrace shield tests that hit QA DB directly
+export DB_USER='smb-hiring-backend-autobot'
+export DB_PASSWORD='CnY8xPg"*'
+
+# jefe stuff (from jhand@)
+export KUBECONFIG=/home/cmyers/.jefe/config
+# Set the title of the Terminal
+temporary-title() { printf "\e]2;$*\a"; }
+# Define a jefe function for entering a container:
+jefecontainer() { temporary-title $1; kubectl exec -it svc/$1 -- /bin/sh; }
+# alias cred='jefectl credentials' # depends on KUBECONFIG above
+
+# fix path to be more readable by removing duplicate entries
+# https://stackoverflow.com/questions/11532157/remove-duplicate-lines-without-sorting
+# https://unix.stackexchange.com/questions/254644/how-do-i-remove-newline-character-at-the-end-of-file
+#export PATH="$(echo -n $PATH | sed 's/:/\n/g' | cat -n | sort -rk2 | sort -uk2 | sort -nk1 | cut -f2- | perl -pi -e 'chomp if eof' 2>/dev/null | tr '\n' ':')"
+export PATH="$(echo -n $PATH | sed 's/:/\n/g' | cat -n | sort -uk2 | sort -nk1 | cut -f2- | perl -pi -e 'chomp if eof' 2>/dev/null | tr '\n' ':')"
