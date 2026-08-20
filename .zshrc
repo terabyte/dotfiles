@@ -6,7 +6,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 # Path to your oh-my-zsh installation.
-export ZSH=/home/cmyers/.oh-my-zsh
+export ZSH="$HOME/.oh-my-zsh"
 export LANG=en_US.UTF-8
 
 # Set name of the theme to load.
@@ -77,7 +77,24 @@ plugins=(git docker encode64 gem gradle httpie mercurial mvn node perl pip pylin
   #export PATH="/home/cmyers/jvms/jdk1.8.0_60/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/cmyers/bin:/home/cmyers/usr/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/X11R6/bin:/usr/X11/bin:.:/home/cmyers/.rvm/bin:/home/cmyers/bin:/home/cmyers/usr/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/X11R6/bin:/usr/X11/bin:.:/home/cmyers/.rvm/bin"
 export PATH="$HOME/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/X11R6/bin:/usr/X11/bin"
 # export MANPATH="/usr/local/man:$MANPATH"
-export PATH="$PATH:/home/cmyers/projects/private_notes/bin"
+export PATH="$PATH:$HOME/projects/private_notes/bin"
+
+# --- macOS only -------------------------------------------------------------
+# Homebrew first, then GNU coreutils/findutils/etc ahead of the BSD versions so
+# scripts written against GNU flags behave. No-ops on Linux.
+if [[ -x /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    if [[ -d /opt/homebrew/opt/coreutils/libexec/gnubin ]]; then
+        export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
+        export MANPATH="/opt/homebrew/opt/coreutils/libexec/gnuman:${MANPATH}"
+    fi
+    for pkg in findutils gnu-sed gnu-tar grep gawk; do
+        gnubin="/opt/homebrew/opt/$pkg/libexec/gnubin"
+        [[ -d "$gnubin" ]] && export PATH="$gnubin:$PATH"
+    done
+    unset gnubin pkg
+fi
+# ----------------------------------------------------------------------------
 
 source $ZSH/oh-my-zsh.sh
 
@@ -256,12 +273,12 @@ bindkey ''    edit-command-line
 
 export GCC_4_X_BIN="/usr/bin/g++-4.8"
 #export PYTHON_2_7_BIN="/usr/bin/python"
-export PYTHON_2_7_BIN="/home/cmyers/.pyenv/shims/python"
+export PYTHON_2_7_BIN="$HOME/.pyenv/shims/python"
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
 
-export PYTHONSTARTUP=~/.pythonrc
+[ -f "$HOME/.pythonrc" ] && export PYTHONSTARTUP="$HOME/.pythonrc"
 
 # FZF is amazeballs
 if [[ -f ~/.fzf.zsh ]]; then
@@ -290,7 +307,7 @@ if [[ -f ~/.jenkins-api-token ]]; then
 fi
 
 # setup pyenv
-export PATH="/home/cmyers/.pyenv/bin:$PATH"
+[ -d "$HOME/.pyenv/bin" ] && export PATH="$HOME/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
@@ -298,19 +315,35 @@ eval "$(pyenv virtualenv-init -)"
 export PICO_SDK_PATH=$HOME/projects/pico/pico-sdk
 
 # Created by `pipx` on 2024-06-25 16:41:13
-export PATH="$PATH:/home/cmyers/.local/bin"
+export PATH="$PATH:$HOME/.local/bin"
 
 # Userspace node. ~/.zshenv puts this on PATH, but the hard `export PATH=...`
 # overwrite further up this file wipes it, so re-add it here.
 [ -d "$HOME/.local/node/bin" ] && export PATH="$HOME/.local/node/bin:$PATH"
 
 # for asdf
-export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
+[ -d "${ASDF_DATA_DIR:-$HOME/.asdf}/shims" ] && export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 
 # bluffalo alias for convenience:
-alias q='/home/cmyers/projects/bluffalo/bin/queue'
+alias q="$HOME/projects/bluffalo/bin/queue"
 [ -f "$HOME/.deno/env" ] && . "$HOME/.deno/env"
+
+# nvm (present on the Mac; guarded so it no-ops elsewhere)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# google-cloud-sdk, wherever it happens to be unpacked
+for _gcloud in "$HOME/Downloads/_/google-cloud-sdk" "$HOME/google-cloud-sdk"; do
+    [ -f "$_gcloud/path.zsh.inc" ] && . "$_gcloud/path.zsh.inc"
+    [ -f "$_gcloud/completion.zsh.inc" ] && . "$_gcloud/completion.zsh.inc"
+done
+unset _gcloud
+
+# Machine-local overrides. Anything host-specific or identity-bearing lives
+# here and is NEVER tracked -- this repo is public.
+[ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
