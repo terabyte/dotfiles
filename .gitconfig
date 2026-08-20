@@ -72,6 +72,9 @@
 [merge]
 	conflictStyle = zdiff3
 
+[diff "qbt-manifest"]
+	command = qbt sdiffDriver
+
 [merge "qbt-manifest"]
       driver = qbt mergeDriver %A %O %B
 
