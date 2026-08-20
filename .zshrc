@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # Path to your oh-my-zsh installation.
 export ZSH=/home/cmyers/.oh-my-zsh
 export LANG=en_US.UTF-8
@@ -7,7 +14,7 @@ export LANG=en_US.UTF-8
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
 #ZSH_THEME="robbyrussell"
-ZSH_THEME="powerlevel9k/powerlevel9k"
+ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # theme customization:
 export TERM="xterm-256color"
@@ -63,7 +70,7 @@ POWERLEVEL9K_BATTERY_LOW_THRESHOLD=25
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git docker encode64 gem gradle httpie mercurial mvn node perl pip pylint repo screen sudo supervisor svn-fast-info vi-mode kubectl)
+plugins=(git docker encode64 gem gradle httpie mercurial mvn node perl pip pylint repo screen sudo supervisor svn-fast-info vi-mode kubectl poetry)
 
 # User configuration
 
@@ -111,7 +118,8 @@ export PAGER="less"
 export GIT_PAGER= # no pager for git
 export LESS='-Ri'                # case insensitive searching in less and support colors
 export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:*.tex=01;33:*.sxw=01;33:*.sxc=01;33:*.lyx=01;33:*.pdf=0;35:*.ps=00;36:*.asm=1;33:*.S=0;33:*.s=0;33:*.h=0;31:*.c=0;35:*.cxx=0;35:*.cc=0;35:*.C=0;35:*.o=1;30:*.am=1;33:*.py=0;34:'
-export GREP_COLOR='1;35'
+#export GREP_COLOR='1;35'
+export GREP_COLORS='mt=1;35'
 
 ####
 ## SSH AGENT STUFF
@@ -122,7 +130,7 @@ SSHAGENT="/usr/bin/ssh-agent"
 # method 2
 SSH_ENV="$HOME/.ssh/environment"
 function start_agent {
-     echo "Initialising new SSH agent..."
+     #echo "Initialising new SSH agent..."
      $SSHAGENT | sed 's/^echo/#echo/' > "${SSH_ENV}"
      echo succeeded
      chmod 600 "${SSH_ENV}"
@@ -132,14 +140,14 @@ function start_agent {
 
 # Source SSH settings, if applicable
 if [ -f "${SSH_ENV}" ]; then
-    echo "Using existing ssh-agent"
+    #echo "Using existing ssh-agent"
     . "${SSH_ENV}" > /dev/null
     #ps ${SSH_AGENT_PID} doesn't work under cywgin
     ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
     start_agent;
 }
 else
-    echo "Creating new ssh-agent"
+    #echo "Creating new ssh-agent"
     start_agent;
 fi
 
@@ -220,7 +228,9 @@ PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 # rust stuff
 [[ -s "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
-if [[ -e ~/.java10rc ]]; then
+if [[ -e ~/.java12rc ]]; then
+	source ~/.java12rc
+elif [[ -e ~/.java10rc ]]; then
 	source ~/.java10rc
 fi
 
@@ -245,7 +255,8 @@ bindkey ''    edit-command-line
 #fi
 
 export GCC_4_X_BIN="/usr/bin/g++-4.8"
-export PYTHON_2_7_BIN="/usr/bin/python"
+#export PYTHON_2_7_BIN="/usr/bin/python"
+export PYTHON_2_7_BIN="/home/cmyers/.pyenv/shims/python"
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
@@ -255,7 +266,8 @@ export PYTHONSTARTUP=~/.pythonrc
 # FZF is amazeballs
 if [[ -f ~/.fzf.zsh ]]; then
     source ~/.fzf.zsh
-    export FZF_TMUX=1
+    #right now, the TMUX mode creates a reproducible problem where if you hit enter quickly twice to select a hist option and then immeidately run it, it creates ghost text. This also happens with arrow keys or other things. The solution is TMUX's new popups functionality but it requires tmux 3.2+ and I am on 2.9 right now. Oops. TODO, I guess
+    #export FZF_TMUX=1
     export FZF_TMUX_HEIGHT="20%"
     export FZF_DEFAULT_OPTS='--height 20% --min-height=10 --reverse --border --inline-info'
 
@@ -276,3 +288,25 @@ function gcd() {
 if [[ -f ~/.jenkins-api-token ]]; then
     source ~/.jenkins-api-token
 fi
+
+# setup pyenv
+export PATH="/home/cmyers/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+# raspberry pi pico dev
+export PICO_SDK_PATH=$HOME/projects/pico/pico-sdk
+
+# Created by `pipx` on 2024-06-25 16:41:13
+export PATH="$PATH:/home/cmyers/.local/bin"
+
+# for asdf
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+
+# bluffalo alias for convenience:
+alias q='/home/cmyers/projects/bluffalo/bin/queue'
+. "/home/cmyers/.deno/env"
