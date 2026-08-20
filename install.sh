@@ -9,7 +9,7 @@ set -uo pipefail
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-FILES=".zshrc .vimrc .tmux.conf"
+FILES=".zshrc .zshenv .vimrc .tmux.conf .p10k.zsh"
 
 for i in $FILES; do
     src="$BASEDIR/$i"
