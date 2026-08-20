@@ -11,10 +11,18 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 FILES=".zshrc .zshenv .vimrc .tmux.conf .p10k.zsh .gitconfig"
 
+# Per-host opt-out: .nolink.<hostname> lists files this machine must NOT have
+# linked (one per line), for configs that still need a real merge.
+NOLINK="$BASEDIR/.nolink.$(hostname -s)"
+
 for i in $FILES; do
     src="$BASEDIR/$i"
     dst="$HOME/$i"
     [[ -f "$src" ]] || { echo "skip $i (not in repo)"; continue; }
+    if [[ -f "$NOLINK" ]] && grep -qxF "$i" "$NOLINK"; then
+        echo "SKIP $i (listed in .nolink.$(hostname -s))"
+        continue
+    fi
 
     if [[ -L "$dst" ]]; then
         if [[ "$(readlink "$dst")" == "$src" ]]; then
