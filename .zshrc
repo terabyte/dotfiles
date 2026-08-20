@@ -300,6 +300,10 @@ export PICO_SDK_PATH=$HOME/projects/pico/pico-sdk
 # Created by `pipx` on 2024-06-25 16:41:13
 export PATH="$PATH:/home/cmyers/.local/bin"
 
+# Userspace node. ~/.zshenv puts this on PATH, but the hard `export PATH=...`
+# overwrite further up this file wipes it, so re-add it here.
+[ -d "$HOME/.local/node/bin" ] && export PATH="$HOME/.local/node/bin:$PATH"
+
 # for asdf
 export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
@@ -309,4 +313,4 @@ export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
 # bluffalo alias for convenience:
 alias q='/home/cmyers/projects/bluffalo/bin/queue'
-. "/home/cmyers/.deno/env"
+[ -f "$HOME/.deno/env" ] && . "$HOME/.deno/env"
