@@ -9,7 +9,7 @@ set -uo pipefail
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-FILES=".zshrc .zshenv .vimrc .tmux.conf .p10k.zsh"
+FILES=".zshrc .zshenv .vimrc .tmux.conf .p10k.zsh .gitconfig"
 
 for i in $FILES; do
     src="$BASEDIR/$i"
@@ -32,3 +32,20 @@ for i in $FILES; do
 
     ln -s "$src" "$dst"
 done
+
+# Host-specific overrides: .gitconfig.<hostname> in this repo becomes
+# ~/.gitconfig.local, which the shared .gitconfig [include]s. Machines with no
+# such file get nothing -- a missing git include is a silent no-op.
+host_src="$BASEDIR/.gitconfig.$(hostname -s)"
+host_dst="$HOME/.gitconfig.local"
+if [[ -f "$host_src" ]]; then
+    if [[ -L "$host_dst" && "$(readlink "$host_dst")" == "$host_src" ]]; then
+        echo "ok   .gitconfig.local (already linked)"
+    else
+        [[ -e "$host_dst" && ! -L "$host_dst" ]] && mv "$host_dst" "$host_dst.old"
+        ln -sfn "$host_src" "$host_dst"
+        echo "link .gitconfig.local -> .gitconfig.$(hostname -s)"
+    fi
+else
+    echo "ok   no host-specific gitconfig for $(hostname -s)"
+fi

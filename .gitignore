@@ -4,3 +4,6 @@
 .vimrc.local
 # backups left by install.sh
 *.old
+.gitconfig.local
+.gitconfig-work
+.gitconfig-personal
