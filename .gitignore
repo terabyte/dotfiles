@@ -1,0 +1,6 @@
+# machine-local overrides, sourced by the tracked configs but never tracked
+.zshrc.local
+.tmux.conf.local
+.vimrc.local
+# backups left by install.sh
+*.old

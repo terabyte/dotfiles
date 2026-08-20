@@ -1,22 +1,34 @@
 #!/usr/bin/env bash
-
-# SUUUUPER simple, for now
+# Symlink the tracked dotfiles into $HOME.
+#
+# Idempotent: an existing correct symlink is left alone, a real file is moved
+# to <name>.old before being replaced, and a MISSING file is created (the old
+# version only linked files that already existed, so a fresh machine got
+# nothing).
+set -uo pipefail
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-FILES=".zshrc .vimrc .tmux.conf .java8rc .java7rc"
-
+FILES=".zshrc .vimrc .tmux.conf"
 
 for i in $FILES; do
-    if [[ -f "$HOME/$i" ]]; then
-        if [[ ! -L "$HOME/$i" ]]; then
-            # not a link, move it out of the way
-            mv $HOME/$i $HOME/$i.old
-        else
-            # it's a link, continue
+    src="$BASEDIR/$i"
+    dst="$HOME/$i"
+    [[ -f "$src" ]] || { echo "skip $i (not in repo)"; continue; }
+
+    if [[ -L "$dst" ]]; then
+        if [[ "$(readlink "$dst")" == "$src" ]]; then
+            echo "ok   $i (already linked)"
             continue
         fi
-        ln -s $BASEDIR/$i $HOME/$i
+        echo "relink $i (was -> $(readlink "$dst"))"
+        rm "$dst"
+    elif [[ -e "$dst" ]]; then
+        echo "backup $i -> $i.old"
+        mv "$dst" "$dst.old"
+    else
+        echo "new  $i"
     fi
-done
 
+    ln -s "$src" "$dst"
+done
