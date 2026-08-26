@@ -14,8 +14,13 @@ Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-markdown'
 Plug 'tpope/vim-repeat'
 
-" TabNine
-Plug 'terabyte/tabnine-vim'
+" TabNine. It's a YouCompleteMe fork, so it needs +python3 -- and Apple's
+" /usr/bin/vim is built without it, where loading this only ever produces
+" "YouCompleteMe unavailable" on every start. Guard on the capability rather
+" than the hostname so it lights up by itself on any box with a python3 vim.
+if has('python3')
+    Plug 'terabyte/tabnine-vim'
+endif
 
 " fzf integration - currently some things are broken inside tmux because...reasons: https://github.com/junegunn/fzf.vim/issues/400
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
