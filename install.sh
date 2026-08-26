@@ -57,3 +57,22 @@ if [[ -f "$host_src" ]]; then
 else
     echo "ok   no host-specific gitconfig for $(hostname -s)"
 fi
+
+# vim-plug bootstrap. .vimrc calls plug#begin() unconditionally, so a machine
+# without ~/.vim/autoload/plug.vim dies with "E117: Unknown function: plug#begin"
+# on every vim start. That loader is not a dotfile and was never in this repo, so
+# unifying .vimrc across machines shipped the config without its bootstrap.
+# Fetch-if-missing only; the plugins themselves still want an explicit :PlugInstall.
+PLUG="$HOME/.vim/autoload/plug.vim"
+if [[ -f "$HOME/.vimrc" ]]; then
+    if [[ -s "$PLUG" ]]; then
+        echo "ok   vim-plug (already bootstrapped)"
+    elif curl -fsSL --create-dirs -o "$PLUG" \
+            https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim; then
+        echo "new  vim-plug -> $PLUG (now run: vim +PlugInstall +qa)"
+    else
+        # Offline is not a reason to fail the whole install.
+        rm -f "$PLUG"
+        echo "WARN could not fetch vim-plug; vim will error until you retry"
+    fi
+fi
