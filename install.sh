@@ -58,6 +58,22 @@ else
     echo "ok   no host-specific gitconfig for $(hostname -s)"
 fi
 
+# Hammerspoon (macOS only): ~/.hammerspoon/init.lua -> hammerspoon/init.lua.
+# It lives in a subdirectory, so it is not in FILES, and the Linux boxes must not
+# grow a stray ~/.hammerspoon. Same idempotent link/backup rules as above.
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    hs_src="$BASEDIR/hammerspoon/init.lua"
+    hs_dst="$HOME/.hammerspoon/init.lua"
+    if [[ -L "$hs_dst" && "$(readlink "$hs_dst")" == "$hs_src" ]]; then
+        echo "ok   .hammerspoon/init.lua (already linked)"
+    else
+        mkdir -p "$HOME/.hammerspoon"
+        [[ -e "$hs_dst" && ! -L "$hs_dst" ]] && { echo "backup .hammerspoon/init.lua -> init.lua.old"; mv "$hs_dst" "$hs_dst.old"; }
+        ln -sfn "$hs_src" "$hs_dst"
+        echo "link .hammerspoon/init.lua"
+    fi
+fi
+
 # vim-plug bootstrap. .vimrc calls plug#begin() unconditionally, so a machine
 # without ~/.vim/autoload/plug.vim dies with "E117: Unknown function: plug#begin"
 # on every vim start. That loader is not a dotfile and was never in this repo, so
