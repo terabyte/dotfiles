@@ -65,7 +65,9 @@
 # [url "git@github.com:bartman/"]
 #     insteadOf = github:
 [push]
-	default = tracking
+	# nothing: every push must name its destination. With tracking, pushing a
+	# feature branch that tracked origin/master landed on master (sre.dev, 2026-09-29).
+	default = nothing
 
 [pack]
     packSizeLimit = 1g
