@@ -30,3 +30,12 @@
 	path = ~/.gitconfig-work
 [includeIf "gitdir:~/projects/"]
 	path = ~/.gitconfig-personal
+
+# git-over-HTTPS auth via gh. The gh path is Homebrew's, so this cannot be shared.
+# The empty helper line clears any inherited helper before adding gh.
+[credential "https://github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
