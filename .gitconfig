@@ -67,8 +67,6 @@
 [push]
 	default = tracking
 
-[pack]
-    packSizeLimit = 1g
 [merge]
 	conflictStyle = zdiff3
 
